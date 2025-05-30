@@ -266,7 +266,7 @@ public class Engine
         foreach (var id in toRemove)
         {
             _gameObjects.Remove(id);
-            //_player.DefusalScore += 1; // optional score update
+            _player.IncreaseScore();
         }
     }
 

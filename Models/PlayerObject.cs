@@ -6,6 +6,11 @@ public class PlayerObject : RenderableGameObject
 {
     private const int _speed = 128; // pixels per second
 
+    public int Score { get; private set; }
+
+    public int FinalScore { get; private set; }
+
+
     public enum PlayerStateDirection
     {
         None = 0,
@@ -66,9 +71,30 @@ public class PlayerObject : RenderableGameObject
         State = (state, direction);
     }
 
+    public void IncreaseScore(int amount = 1)
+    {
+        if (State.State != PlayerState.GameOver)
+        {
+            Score += amount;
+        }
+    }
+
+    public void ResetScore()
+    {
+        FinalScore = -1;
+        Score = 0;
+    }
+
+
     public void GameOver()
     {
+        if (FinalScore != Score)
+        {
+            FinalScore = Score;
+            Console.WriteLine($"Game Over! Final Score: {FinalScore}");
+        }
         SetState(PlayerState.GameOver, PlayerStateDirection.None);
+        
     }
 
     public void Attack()
@@ -88,7 +114,6 @@ public class PlayerObject : RenderableGameObject
         {
             return false;
         }
-        // Just returns true to signal intent; actual defusal is handled by Engine
         return true;
     }
 
