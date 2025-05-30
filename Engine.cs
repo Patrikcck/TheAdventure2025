@@ -134,37 +134,41 @@ public class Engine
     }
 
     public void RenderAllObjects()
+{
+    var toRemove = new List<int>();
+
+    foreach (var gameObject in GetRenderables())
     {
-        var toRemove = new List<int>();
-        foreach (var gameObject in GetRenderables())
+        gameObject.Render(_renderer);
+
+        if (gameObject is TemporaryGameObject tempGameObject)
         {
-            gameObject.Render(_renderer);
-            if (gameObject is TemporaryGameObject { IsExpired: true } tempGameObject)
+            // Trigger GameOver if the bomb is exploding (not yet expired)
+            if (tempGameObject.IsExploded && !tempGameObject.IsExpired)
+            {
+                var deltaX = Math.Abs(_player!.Position.X - tempGameObject.Position.X);
+                var deltaY = Math.Abs(_player!.Position.Y - tempGameObject.Position.Y);
+                if (deltaX < 100 && deltaY < 100)
+                {
+                    _player.GameOver();
+                }
+            }
+
+            // Remove it only when the animation is done
+            if (tempGameObject.IsExpired)
             {
                 toRemove.Add(tempGameObject.Id);
             }
         }
-
-        foreach (var id in toRemove)
-        {
-            _gameObjects.Remove(id, out var gameObject);
-
-            if (_player == null)
-            {
-                continue;
-            }
-
-            var tempGameObject = (TemporaryGameObject)gameObject!;
-            var deltaX = Math.Abs(_player.Position.X - tempGameObject.Position.X);
-            var deltaY = Math.Abs(_player.Position.Y - tempGameObject.Position.Y);
-            if (deltaX < 100 && deltaY < 100)
-            {
-                _player.GameOver();
-            }
-        }
-
-        _player?.Render(_renderer);
     }
+
+    foreach (var id in toRemove)
+    {
+        _gameObjects.Remove(id);
+    }
+
+    _player?.Render(_renderer);
+}
 
     public void RenderTerrain()
     {

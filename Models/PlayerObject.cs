@@ -84,6 +84,10 @@ public class PlayerObject : RenderableGameObject
     
     public bool TryDefuse()
     {
+        if (State.State == PlayerState.GameOver)
+        {
+            return false;
+        }
         // Just returns true to signal intent; actual defusal is handled by Engine
         return true;
     }

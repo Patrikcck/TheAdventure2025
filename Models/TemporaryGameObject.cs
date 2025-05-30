@@ -7,7 +7,7 @@ public class TemporaryGameObject : RenderableGameObject
     public double Ttl { get; init; }
     public bool IsExpired => (DateTimeOffset.Now - _spawnTime).TotalSeconds >= Ttl;
     
-    public bool IsExploded => (DateTimeOffset.Now - _spawnTime).TotalSeconds + 1 >= Ttl;
+    public bool IsExploded => (DateTimeOffset.Now - _spawnTime).TotalSeconds + 0.9 >= Ttl;
 
     private DateTimeOffset _spawnTime;
     
