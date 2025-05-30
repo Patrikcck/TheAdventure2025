@@ -32,7 +32,7 @@ public class Engine
 
     public void SetupWorld()
     {
-        _player = new(SpriteSheet.Load(_renderer, "Player.json", "Assets"), 100, 100);
+        _player = new(SpriteSheet.Load(_renderer, "Player.json", "Assets"), 400, 400);
 
         var levelContent = File.ReadAllText(Path.Combine("Assets", "terrain.tmj"));
         var level = JsonSerializer.Deserialize<Level>(levelContent);
@@ -92,20 +92,26 @@ public class Engine
         double down = _input.IsDownPressed() ? 1.0 : 0.0;
         double left = _input.IsLeftPressed() ? 1.0 : 0.0;
         double right = _input.IsRightPressed() ? 1.0 : 0.0;
-        bool isAttacking = _input.IsKeyAPressed() && (up + down + left + right <= 1);
-        bool addBomb = _input.IsKeyBPressed();
+        bool isAttacking = _input.IsKeyAPressed();
+        bool restart = _input.IsKeyRPressed();
+        //bool addBomb = _input.IsKeyBPressed();
 
         _player.UpdatePosition(up, down, left, right, 48, 48, msSinceLastFrame);
         if (isAttacking)
         {
             _player.Attack();
         }
-        
+
         _scriptEngine.ExecuteAll(this);
 
-        if (addBomb)
+        /*if (addBomb)
         {
             AddBomb(_player.Position.X, _player.Position.Y, false);
+        }*/
+
+        if (restart)
+        {
+            RespawnPlayer();
         }
     }
 
@@ -214,5 +220,17 @@ public class Engine
 
         TemporaryGameObject bomb = new(spriteSheet, 2.1, (worldCoords.X, worldCoords.Y));
         _gameObjects.Add(bomb.Id, bomb);
+    }
+    
+    private void RespawnPlayer()
+    {
+        _gameObjects.Clear();
+
+        _player = new PlayerObject(
+            SpriteSheet.Load(_renderer, "Player.json", "Assets"),
+            400, 400 
+        );
+
+        _renderer.CameraLookAt(_player.Position.X, _player.Position.Y);
     }
 }
