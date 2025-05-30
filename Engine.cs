@@ -92,14 +92,18 @@ public class Engine
         double down = _input.IsDownPressed() ? 1.0 : 0.0;
         double left = _input.IsLeftPressed() ? 1.0 : 0.0;
         double right = _input.IsRightPressed() ? 1.0 : 0.0;
-        bool isAttacking = _input.IsKeyAPressed();
+        bool isDefusing = _input.IsKeySpacePressed();
         bool restart = _input.IsKeyRPressed();
         //bool addBomb = _input.IsKeyBPressed();
 
         _player.UpdatePosition(up, down, left, right, 48, 48, msSinceLastFrame);
-        if (isAttacking)
+        if (isDefusing)
         {
-            _player.Attack();
+            bool triedToDefuse = _player.TryDefuse();
+            if (triedToDefuse)
+            {
+                DefuseNearbyBombs();
+            }
         }
 
         _scriptEngine.ExecuteAll(this);
@@ -221,16 +225,45 @@ public class Engine
         TemporaryGameObject bomb = new(spriteSheet, 2.1, (worldCoords.X, worldCoords.Y));
         _gameObjects.Add(bomb.Id, bomb);
     }
-    
+
     private void RespawnPlayer()
     {
         _gameObjects.Clear();
 
         _player = new PlayerObject(
             SpriteSheet.Load(_renderer, "Player.json", "Assets"),
-            400, 400 
+            400, 400
         );
 
         _renderer.CameraLookAt(_player.Position.X, _player.Position.Y);
     }
+    
+    private void DefuseNearbyBombs()
+    {
+        if (_player == null) return;
+
+        var defusalRange = 32; // Define the range in pixels
+
+        var toRemove = new List<int>();
+        foreach (var kvp in _gameObjects)
+        {
+            if (kvp.Value is TemporaryGameObject bomb)
+            {
+                double deltaX = Math.Abs(bomb.Position.X - _player.Position.X);
+                double deltaY = Math.Abs(bomb.Position.Y - _player.Position.Y);
+
+                if (deltaX <= defusalRange && deltaY <= defusalRange)
+                {
+                    toRemove.Add(kvp.Key);
+                }
+            }
+        }
+
+        foreach (var id in toRemove)
+        {
+            _gameObjects.Remove(id);
+            //_player.DefusalScore += 1; // optional score update
+        }
+    }
+
 }

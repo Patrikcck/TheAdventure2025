@@ -81,6 +81,13 @@ public class PlayerObject : RenderableGameObject
         var direction = State.Direction;
         SetState(PlayerState.Attack, direction);
     }
+    
+    public bool TryDefuse()
+    {
+        // Just returns true to signal intent; actual defusal is handled by Engine
+        return true;
+    }
+
 
     public void UpdatePosition(double up, double down, double left, double right, int width, int height, double time)
     {
@@ -117,7 +124,7 @@ public class PlayerObject : RenderableGameObject
         else
         {
             newState = PlayerState.Move;
-            
+
             if (y < Position.Y && newDirection != PlayerStateDirection.Up)
             {
                 newDirection = PlayerStateDirection.Up;

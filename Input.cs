@@ -37,10 +37,10 @@ public unsafe class Input
         return keyboardState[(int)KeyCode.Down] == 1;
     }
 
-    public bool IsKeyAPressed()
+    public bool IsKeySpacePressed()
     {
         ReadOnlySpan<byte> _keyboardState = new(_sdl.GetKeyboardState(null), (int)KeyCode.Count);
-        return _keyboardState[(int)KeyCode.A] == 1;
+        return _keyboardState[(int)KeyCode.Space] == 1;
     }
 
     /*public bool IsKeyBPressed()
