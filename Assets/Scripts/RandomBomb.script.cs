@@ -8,17 +8,17 @@ public class RandomBomb : IScript
 
     public void Initialize()
     {
-        _nextBombTimestamp = DateTimeOffset.UtcNow.AddSeconds(Random.Shared.Next(2, 5));
+        _nextBombTimestamp = DateTimeOffset.UtcNow.AddSeconds(Random.Shared.Next(2, 3));
     }
 
     public void Execute(Engine engine)
     {
         if (_nextBombTimestamp < DateTimeOffset.UtcNow)
         {
-            _nextBombTimestamp = DateTimeOffset.UtcNow.AddSeconds(Random.Shared.Next(2, 5));
+            _nextBombTimestamp = DateTimeOffset.UtcNow.AddSeconds(Random.Shared.Next(2, 3));
             var playerPos = engine.GetPlayerPosition();
-            var bombPosX = playerPos.X + Random.Shared.Next(-50, 50);
-            var bombPosY = playerPos.Y + Random.Shared.Next(-50, 50);
+            var bombPosX = playerPos.X + Random.Shared.Next(-75, 75);
+            var bombPosY = playerPos.Y + Random.Shared.Next(-75, 75);
             engine.AddBomb(bombPosX, bombPosY, false);
         }
     }

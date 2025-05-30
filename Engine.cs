@@ -157,7 +157,7 @@ public class Engine
             var tempGameObject = (TemporaryGameObject)gameObject!;
             var deltaX = Math.Abs(_player.Position.X - tempGameObject.Position.X);
             var deltaY = Math.Abs(_player.Position.Y - tempGameObject.Position.Y);
-            if (deltaX < 32 && deltaY < 32)
+            if (deltaX < 100 && deltaY < 100)
             {
                 _player.GameOver();
             }
@@ -242,7 +242,7 @@ public class Engine
     {
         if (_player == null) return;
 
-        var defusalRange = 32; // Define the range in pixels
+        var defusalRange = 10; // Define the range in pixels
 
         var toRemove = new List<int>();
         foreach (var kvp in _gameObjects)
